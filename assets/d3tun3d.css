@@ -1,0 +1,86 @@
+
+html {
+  overflow: hidden
+}
+
+body {
+ margin: 0;
+ font-family: "Lato";
+}
+
+#svg_area {
+  position: absolute;
+}
+
+@keyframes pluck {
+  0% {
+    stroke: red;
+    stroke-width: 5px;
+  }
+  15% {
+    stroke-width: 10px;
+  }
+  50% {
+    stroke-width: 9px;
+  }
+  75% {
+    stroke-width: 7px;
+  }
+  80% {
+    stroke-width: 6px;
+  }
+  100% {
+    stroke-width: 5px;
+  }
+}
+
+.pluck-string {
+  animation-fill-mode: forwards;
+}
+
+#controls {
+position: absolute;
+opacity: .85;
+display: none;
+background-color: lightgray;
+  cursor: pointer;
+
+}
+
+.control-div {
+  position: absolute;
+  background-color: black;
+  color: white;
+  padding: 3px;
+  border-radius: 3px;
+  z-index: 30;
+  overflow: hidden;
+  font-size: 18px;
+  font-family: "Lato";
+  transition: .3s;
+  width: 30px;
+  height: 20px;
+
+}
+
+.control-div p {
+    font-size: 14px;
+    margin: 0px;
+}
+
+.control-div:hover {
+  height: 230px;
+  width: 160px;
+  z-index: 60;
+  opacity: 1;
+}
+
+.control-div input {
+  width: 100px;
+  border-radius: 3px;
+
+}
+
+.control-div input:focus {
+  outline-color: black;
+}

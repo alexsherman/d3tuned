@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+  <link rel="stylesheet" href="assets/d3tun3d.css">
+  <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+  <title>D3tun3d</title>
+</head>
+
+<script id="control-template" type="text/x-handlebars-template">
+    <div class="control-div">
+    edit parameters
+    <p>Waveform:</br> <input type="text" name="waveform" value="{{wavetype}}"></p>
+    <p>Release:</br> <input type="text" name="release" value="{{release}}"></p>
+    <p>Pitch-to-length factor: </br><input type="text" name="release" value="{{pitchfactor}}"></p>
+    <p>Key: </br><input type="text" name="release" value="{{key}}"></p>
+    </div>
+</script>
+
+
+<body>
+  <div id="graphic_area"></div>
+  <div id="controls"></div>
+</body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript" src="assets/d3tun3d.js"></script>
