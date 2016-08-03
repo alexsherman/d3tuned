@@ -11,17 +11,32 @@
 <script id="control-template" type="text/x-handlebars-template">
     <div class="control-div">
     edit parameters
-    <p>Waveform:</br> <input type="text" name="waveform" value="{{wavetype}}"></p>
-    <p>Release:</br> <input type="text" name="release" value="{{release}}"></p>
-    <p>Pitch-to-length factor: </br><input type="text" name="release" value="{{pitchfactor}}"></p>
-    <p>Key: </br><input type="text" name="release" value="{{key}}"></p>
+    <p>Waveform:</br> <input type="text" id="{{class}}-wave" name="waveform" value="{{wavetype}}"></p>
+    <p>Release:</br> <input type="range" id="{{class}}-release" name="release" value="{{release}}"></p>
+    <p>Pitch-to-length factor: </br><input type="text" id="{{class}}-pitchfactor" name="release" value="{{pitchfactor}}"></p>
+    <p>Key: </br><input type="text" id="{{class}}-key" name="key" value="{{key}}"></p></br>
+    <p><button type="button" class="{{class}}">Save Values</button></p>
     </div>
 </script>
 
 
 <body>
-  <div id="graphic_area"></div>
-  <div id="controls"></div>
+  <div id="intro">
+    <h1>to begin, click and then drag anywhere</h1>
+    <h2>to create sounds, drag across strings with your mouse, or use your keyboard</h2>
+    <h2>to change the sound parameters of any string, click "c"</h2>
+  </div>
+  <div id="graphic_area">
+    <div id="bottom-bar">
+    Volume: <input type="range" id="volume">
+    Color: <input type="text" id="color">
+    <button type="button" id="instructions">Instructions</button>
+    <button type="button" id="about">About</button>
+    </div>
+  </div>
+  <div id="controls">
+
+  </div>
 </body>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>

@@ -8,13 +8,24 @@ body {
  font-family: "Lato";
 }
 
+#intro {
+  padding-left: 20px;
+}
+
+#intro h1 {
+  font-size: 45px;
+}
+
+#graphic_area {
+  display: none;
+}
+
 #svg_area {
   position: absolute;
 }
 
 @keyframes pluck {
   0% {
-    stroke: red;
     stroke-width: 5px;
   }
   15% {
@@ -36,6 +47,10 @@ body {
 
 .pluck-string {
   animation-fill-mode: forwards;
+}
+
+#bottom-bar {
+  padding: 5px;
 }
 
 #controls {

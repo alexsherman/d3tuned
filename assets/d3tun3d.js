@@ -4,21 +4,24 @@ fix findMidpoint to use current data from lineArray, not checking selection (bc 
 make edit parameters pretty and functionable
 make intro
 make about/how-to popup
+
+bug - using buttons disables hover behavior for given string
 */
 
 (function() {
   var width =  window.innerWidth;
   var svg_area;
   var height = window.innerHeight;
-  var release = .7;
-  var waveType = "square";
-  var maxVolume = .04;
+  var waveType = "sine";
+  var volume = .04;
+  var barheight = 39;
   var dragline;
   var lineArray = [];
   var context;
   var dragx;
   var dragy;
   var controls = true;
+  var color = "red";
 
   var keyMap = d3.map()
 
@@ -57,13 +60,13 @@ make about/how-to popup
   }
 
 
-  function playSound(frequency, osctype) {
+  function playSound(frequency, osctype, release) {
     var osc = context.createOscillator();
     osc.frequency.value = frequency;
     osc.type = osctype;
 
     var waveArray = new Float32Array(2);
-    waveArray[0] = maxVolume;
+    waveArray[0] = volume;
     waveArray[1] = 0;
 
     var gainNode = context.createGain();
@@ -71,7 +74,7 @@ make about/how-to popup
     gainNode.connect(context.destination)
     gainNode.gain.setValueCurveAtTime(waveArray, context.currentTime, release);
     osc.start(0);
-    osc.stop(context.currentTime + release);
+    osc.stop(context.currentTime + 5);
   }
 
   function addFunctionality() {
@@ -84,7 +87,7 @@ make about/how-to popup
 
   function started() {
     var x1 = d3.event.x;
-    var y1 = d3.event.y;
+    var y1 = d3.event.y - barheight;
 
     dragline.attr("x1", x1)
       .attr("y1", y1)
@@ -94,7 +97,7 @@ make about/how-to popup
 
   function dragged() {
     var x2 = d3.event.x;
-    var y2 = d3.event.y;
+    var y2 = d3.event.y - barheight;
     dragline.attr("x2", x2)
       .attr("y2", y2);
   }
@@ -104,14 +107,15 @@ make about/how-to popup
     var line = dragline;
     var i = lineArray.length;
     var length =  getLength(line);
+    var linewidth = length * .02;
     if (length > 20) {
       line.attr("id", "line-" + i)
         .attr("class", "pluck-string")
         .attr("stroke-width", "5px")
         .attr("stroke-dasharray", "none");
       lineArray.push( {
-          "waveType": "square",
-          "release": .5,
+          "waveType": waveType,
+          "release": .7,
           "position": [
                       line.attr('x1'),
                       line.attr('y1'),
@@ -133,7 +137,7 @@ make about/how-to popup
         })
         .on("mouseout", function() {
               d3.select(this).style("animation", "pluck .4s");
-              playSound(getFrequencyOfLength(lineArray[i].linelength) * lineArray[i].pitchfactor, lineArray[i].waveType);
+              playSound(getFrequencyOfLength(lineArray[i].linelength) * lineArray[i].pitchfactor, lineArray[i].waveType, lineArray[i].release);
         })
         .on("click", function () {
           console.log(lineArray);
@@ -182,17 +186,39 @@ make about/how-to popup
   function resetKeys() {
     keyMap.clear();
     for (var i = 0; i < lineArray.length; i++) {
-      lineArray[i].key = i + 49;
       keyMap.set(lineArray[i].key, lineArray[i]);
     }
   }
 
   function initDetune() {
     setupAudioContext();
-    svg_area = createSvgArea();
-    dragline = createDragLine();
-    addFunctionality();
-    enableControlMode()
+    d3.select("body").style("width", width +"px")
+    .style("height", height + "px");
+
+    $("body").on("click", function() {
+      d3.select("#intro").style("display", "none");
+      d3.select("#graphic_area").style("display", "block");
+
+      $("body").off();
+
+      $('#volume').change(function() {
+        var val = $('#volume').val();
+        volume = val * .001;
+      });
+
+      $("#bottom-bar").keypress(function(e) {
+        if(e.which == 13 && $('#color').val() != "") {
+            color = $('#color').val();
+            console.log(color);
+        }
+      });
+
+      svg_area = createSvgArea();
+      dragline = createDragLine();
+      addFunctionality();
+      enableControlMode()
+
+    })
   }
 
   function getLength(selection) {
@@ -244,9 +270,10 @@ make about/how-to popup
               keyMap.each(function(value, key) {
                 var context = {
                   "wavetype": value.waveType,
-                  "release": value.release,
+                  "release": +value.release * 20,
                   "pitchfactor": value.pitchfactor,
-                  "key": value.key
+                  "key": value.key,
+                  "class": value.line.id
                 }
                 var html = template(context);
                 var midpoint =  getMidpoint(d3.select(value.line));
@@ -256,12 +283,46 @@ make about/how-to popup
                   .style("left", midpoint[0]  + "px")
                   .style("top", midpoint[1] + "px")
                   .on("mouseover", function() {
-                    d3.select(value.line).attr("stroke", "red");
+                    d3.select(value.line).attr("stroke", color);
                   })
                   .on("mouseout", function() {
                     d3.select(value.line).attr("stroke", "black");
                   });
-                })
+
+                  document.getElementById(value.line.id + "-key").addEventListener("keydown", function(e) {
+                      e.preventDefault();
+                    d3.select("#" + value.line.id + "-key").property("value", e.which);
+                  });
+
+                  //save button
+                  d3.select("." + value.line.id).on("click", function() {
+                    var line = d3.select(value.line);
+                    keyMap.each(function(value, key) {
+                      if (d3.select(value.line).attr("stroke") === color) {
+                          for (var i = 0; i < lineArray.length; i++) {
+                            if (lineArray[i].line.id === value.line.id) {
+                                lineArray.splice(i, 1);
+                                lineArray.push( {
+                                      "waveType": d3.select("#" + value.line.id + "-wave").property("value"),
+                                      "release": (d3.select("#" + value.line.id + "-release").property("value") == 0) ? .01 : d3.select("#" + value.line.id + "-release").property("value") / 20,
+                                      "position": [
+                                                  line.attr('x1'),
+                                                  line.attr('y1'),
+                                                  line.attr('x2'),
+                                                  line.attr('y2')
+                                                ],
+                                      "pitchfactor": d3.select("#" + value.line.id + "-pitchfactor").property("value"),
+                                      "linelength": getLength(line),
+                                      "key": d3.select("#" + value.line.id + "-key").property("value"),
+                                      "line": line._groups[0][0]
+                                    })
+                                }
+                            }
+                            resetKeys();
+                          }
+                      })
+                    });
+                  });
           } else {
             d3.select("#controls").style("display", "none");
             d3.selectAll(".control-div").remove();
@@ -273,7 +334,7 @@ make about/how-to popup
 
   function pluckString(lineData) {
     pluckBegin(lineData);
-    playSound(getFrequencyOfLength(lineData.linelength) * lineData.pitchfactor, lineData.waveType);
+    playSound(getFrequencyOfLength(lineData.linelength) * lineData.pitchfactor, lineData.waveType, lineData.release);
     setTimeout(function() {pluckEnd(lineData)}, 10);
   }
 
@@ -284,6 +345,7 @@ make about/how-to popup
   function pluckEnd(lineData) {
     if (d3.select("#lineshadow-" + lineData.key) != undefined) d3.select("#lineshadow-" + lineData.key).remove();
 
+
     d3.select(lineData.line).style("animation", "pluck .4s");
 
     ///CHANGR SHADOW TO CIRCLE IT WILL BE COOL
@@ -293,12 +355,12 @@ make about/how-to popup
       .attr("y1", d3.select(lineData.line).attr("y1"))
       .attr("y2", d3.select(lineData.line).attr("y2"))
       .attr("x2", d3.select(lineData.line).attr("x2"))
-      .style("opacity", .4)
+      .style("opacity", .8)
       .style("transition", ".6s");
 
 
     setTimeout(function() {
-      d3.select("#lineshadow-" + lineData.key).style("stroke", "red")
+      d3.select("#lineshadow-" + lineData.key).style("stroke", color)
       .style("stroke-width", "50px")
       .style("opacity", 0);
     }, 10);
