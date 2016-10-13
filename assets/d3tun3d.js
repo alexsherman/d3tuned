@@ -1,11 +1,9 @@
 /**
 TO DO:
-fix findMidpoint to use current data from lineArray, not checking selection (bc of drag transforms)
-make edit parameters pretty and functionable
-make intro
-make about/how-to popup
-
-bug - using buttons disables hover behavior for given string
+fix delete
+add zoom ability
+add global parameters
+create way to save to mysql database
 */
 
 (function() {
@@ -22,6 +20,8 @@ bug - using buttons disables hover behavior for given string
   var dragy;
   var controls = true;
   var color = "red";
+  var lastX;
+  var lastY;
 
   var keyMap = d3.map()
 
@@ -60,10 +60,10 @@ bug - using buttons disables hover behavior for given string
   }
 
 
-  function playSound(frequency, osctype, release) {
+  function playSound(line) {
     var osc = context.createOscillator();
-    osc.frequency.value = frequency;
-    osc.type = osctype;
+    osc.frequency.value = getFrequencyOfLength(getLength(line));
+    osc.type = "sine";
 
     var waveArray = new Float32Array(2);
     waveArray[0] = volume;
@@ -72,7 +72,7 @@ bug - using buttons disables hover behavior for given string
     var gainNode = context.createGain();
     osc.connect(gainNode);
     gainNode.connect(context.destination)
-    gainNode.gain.setValueCurveAtTime(waveArray, context.currentTime, release);
+    gainNode.gain.setValueCurveAtTime(waveArray, context.currentTime, .9);
     osc.start(0);
     osc.stop(context.currentTime + 5);
   }
@@ -113,7 +113,7 @@ bug - using buttons disables hover behavior for given string
         .attr("class", "pluck-string")
         .attr("stroke-width", "5px")
         .attr("stroke-dasharray", "none");
-      lineArray.push( {
+    /*  lineArray.push( {
           "waveType": waveType,
           "release": .7,
           "position": [
@@ -126,29 +126,37 @@ bug - using buttons disables hover behavior for given string
           "linelength": getLength(line),
           "key": i + 49,
           "line": line._groups[0][0]
-        })
+        })*/
+        lineArray.push(line)
 
-        resetKeys();
+        $("#svg_area").off().mousemove(function(e) {
+          var x = e.clientX;
+          var y = e.clientY - 39;
+
+          for (var j = 0; j < lineArray.length; j++) {
+            if (linesIntersect(x, y, lastX, lastY, lineArray[j].attr('x1'), lineArray[j].attr('y1'), lineArray[j].attr('x2'), lineArray[j].attr('y2'))) {
+              lineArray[j].style("animation", "");
+              playSound(lineArray[j]);
+              var storeline = lineArray[j];
+                setTimeout(function() {
+                  storeline.style("animation", "pluck .4s");
+                }, 10);
+              }
+
+          }
+
+          lastX = x;
+          lastY = y;
+        })
 
       line
-      .on("mouseover", function() {
-
-          d3.select(this).style("animation", "");
-        })
-        .on("mouseout", function() {
-              d3.select(this).style("animation", "pluck .4s");
-              playSound(getFrequencyOfLength(lineArray[i].linelength) * lineArray[i].pitchfactor, lineArray[i].waveType, lineArray[i].release);
-        })
-        .on("click", function () {
-          console.log(lineArray);
-        })
         .on("dblclick", function(d,i) {
           d3.select(this).remove();
           lineArray.splice(i, 1);
           resetKeys();
           updateEventListeners();
-        })
-          .call(d3.drag()
+        });
+      /*    .call(d3.drag()
             .on("start", function() {
               dragx = d3.event.x;
               dragy = d3.event.y;
@@ -173,14 +181,25 @@ bug - using buttons disables hover behavior for given string
                             line.attr('y2')
                           ]
             })
-          );
+          );*/
 
     } else {
       line.remove();
     }
 
     dragline = createDragLine();
-    updateEventListeners();
+  }
+
+  function linesIntersect(a, b, c, d, p, q, r, s) {
+    var det, gamma, lambda;
+     det = (c - a) * (s - q) - (r - p) * (d - b);
+     if (det === 0) {
+       return false;
+     } else {
+       lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det;
+       gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
+       return (0 < lambda && lambda < 1) && (0 < gamma && gamma < 1);
+     }
   }
 
   function resetKeys() {
