@@ -21,6 +21,7 @@ body {
 
 #svg_area {
   position: absolute;
+  background-color: lightblue;
 }
 
 @keyframes pluck {
