@@ -9,22 +9,57 @@
 </head>
 
 <body>
+
   <div id="intro">
     <h1>to begin, click and then drag anywhere to create a string</h1>
-    <h2>to create sounds, drag across strings with your mouse, or use your keyboard</h2>
-    <h2>use the bottom controls to control sound parameters</h2>
+    <h2>to create sounds, drag across strings with your mouse</h2>
+    <h2>use the top controls to control sound parameters</h2>
+  </div>
+    <div id="top-bar">
+        <div id="buttons">
+          <p><button type="button" id="instructions">Instructions</button></p>
+          <p><button type="button" id="save">Save</button></p>
+          <p><button type="button" id="load">Load</button></p>
+          <p><button type="button" id="reset">New</button></p>
+          <input type="file" id="fileupload" readonly>
+          <p><button type="button" id="examples">Examples</button></p>
+        </div>
+      <div id="parameters">
+        <br>
+        <p>Volume: <input type="range" id="volume"></p>
+        <p>Release:  <input type="range" id="release"></p>
+        <p>Wave: </p>
+        <p><button class="waveSelection" id="switch_sine">&#9711;</button></p>
+        <p>  <button class="waveSelection" id="switch_square">&#9645;</button></p>
+        <p>  <button class="waveSelection" id="switch_triangle" autofocus>&#9651;</button></p>
+        <br>
+        <p>Background: <input type="color" value="#fcfcfc" id="backgroundcolor"></p>
+        <p>String Color: <input type="color" id="stringcolor"></p>
+        <br>
+        <p id="length">Length: </p>
+      </div>
   </div>
   <div id="graphic_area">
-    <div id="bottom-bar">
-    Volume: <input type="range" id="volume">
-    Color: <input type="text" id="color">
-    <button type="button" id="instructions">Instructions</button>
-    <button type="button" id="about">About</button>
-    <button type="button" id="save">Save</button>
-    </div>
   </div>
-  <div id="controls">
-
+  <div id="instruction_area">
+    <h1>to create a string, simply click and drag</h1>
+    <h3>the longer the string, the higher the pitch</h3>
+    <h3>if you'd like to be more precise, look at the bottom of sidebar to see the length of the string you're creating</h3>
+    <h3>for more information about pitch, intervals, and ratios, click <a href="http://legacy.earlham.edu/~tobeyfo/musictheory/Book1/FFH1_CH1/1M_RatiosCommas1.html">here</a></h3>
+<br>
+    <h1>to change the volume, release time, wave, or color, use the buttons to the side</h1>
+<br>
+    <h1>to enter delete mode, click backspace</h1>
+    <h3>while in delete mode, plucking a string will delete it instead of creating a sound</h3>
+    <h3>to exit delete mode, click backspace again</h3>
+<br>
+    <h1>to locally save your work, click save</h1>
+    <h3>a small json file should automatically download</h3>
+<br>
+    <h1> to load something you've save, click load and find the json file</h1>
+<br>
+<br>
+    <h2>created by <a href="http://alexsherman.xyz">alex sherman</a></h2>
   </div>
 </body>
 

@@ -4,6 +4,7 @@ html {
 
 body {
  margin: 0;
+ width: 100%;
  font-family: "Lato";
 }
 
@@ -16,18 +17,18 @@ body {
 }
 
 #graphic_area {
+  width: 90%;
+  position: absolute;
+  margin-left: 10%;
   display: none;
 }
 
 #svg_area {
-  position: absolute;
-  background-color: lightblue;
+  width: 100%;
+  background-color: #fcfcfc;
 }
 
 @keyframes pluck {
-  0% {
-    stroke-width: 5px;
-  }
   15% {
     stroke-width: 10px;
   }
@@ -49,53 +50,72 @@ body {
   animation-fill-mode: forwards;
 }
 
-#bottom-bar {
+#fileupload {
+  display: none;
+}
+
+#top-bar {
+  display: none;
   padding: 5px;
-}
-
-#controls {
-position: absolute;
-opacity: .85;
-display: none;
-background-color: lightgray;
-  cursor: pointer;
-
-}
-
-.control-div {
+  width: 9.5%;
   position: absolute;
-  background-color: black;
-  color: white;
-  padding: 3px;
-  border-radius: 3px;
-  z-index: 30;
-  overflow: hidden;
-  font-size: 18px;
-  font-family: "Lato";
-  transition: .3s;
-  width: 30px;
-  height: 20px;
-
+  text-align: center;
 }
 
-.control-div p {
-    font-size: 14px;
-    margin: 0px;
-}
-
-.control-div:hover {
-  height: 230px;
-  width: 160px;
-  z-index: 60;
-  opacity: 1;
-}
-
-.control-div input {
+button {
+  border: none;
+  text-shadow: none;
+  box-shadow: none;
+  background-color: lightgray;
+  border: 2px solid lightgray;
+  padding: 10px;
+  font-size: 16px;
+  text-align: center;
+  transition: .2s;
   width: 100px;
-  border-radius: 3px;
+}
+
+.waveSelection {
+  width: 40px;
+}
+
+button:hover, input[type="color"]:hover {
+  border: 2px solid black;
 
 }
 
-.control-div input:focus {
-  outline-color: black;
+button:focus, input[type="button"]:focus {
+    outline: none;
+    border: 2px solid black;
+
+}
+
+input[type="color"] {
+  box-shadow: none;
+  border: 2px solid white;
+  padding: none;
+}
+
+#instruction_area {
+  position: absolute;
+  margin-left: 9%;
+  padding-left: 2%;
+  display: none;
+  z-index: 10;
+}
+
+h1, h2, h3 {
+  font-weight: 100;
+}
+
+h1 {
+  font-size: 2vw;
+}
+
+h2 {
+  font-size: 1.5vw;
+}
+
+h3 {
+  font-size: 1vw;
 }
